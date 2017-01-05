@@ -1,0 +1,72 @@
+{ "script" :
+	{ "team"	: "D3"
+	, "class"	: "Scout"
+	, "name"	: "Messenger"
+	, "matches"	: 0
+	, "wins"	: 0
+	, "losses"	: 0
+	, "executions"	: 0
+	, "lived"	: 0
+	, "died"	: 0
+	, "absorbed"	: 0
+	, "killed"	: 0
+	, "moved"	: 0
+	, "code"	: [ 
+
+	" variable moved : ( have I moved? ) ",
+	" : moved? ( -- b ) 	",
+	" 		moved ? ; 		",
+	
+	" : movesLeft ( -- b ) 	",
+	"		movesLeft 0 > ; ",
+
+	" : moveAcross ( -- ) 	",
+	" 0 check!				",
+	" ."OUT OF BOUNDS" = 	",
+	" if ( turn around ) 	",
+	"	3 turn!				",
+	" else ( nothing )		",
+	" then					",
+	"	move! ;				",
+	"
+: enemy? ( s -- b ) ( decide if enemy )
+	team <> ;
+
+: nonZeroRange? ( i -- b i )
+	dup 0 <> ;
+
+: tryShooting! ( ih, id, ir, st -- )
+	enemy? swap nonZeroRange? rot and
+	if
+		shoot!
+	else 
+		pop pop
+	then
+		pop
+	;
+
+: shootEveryone ( try shot at all targets )
+	scan! 1 - dup 0 <
+	if ( nothing )
+	else ( shoot at all targets )
+		0 do
+		I identify!
+		tryShooting
+		loop
+	then
+	;
+
+: play ( -- )
+	."Salutations!"
+	."SNIPER"
+	send pop
+	shootEveryone
+	begin
+		moveAcross
+		shootEveryone
+		movesLeft 0 =
+	until
+	" 
+	]
+	}
+}
